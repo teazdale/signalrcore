@@ -137,17 +137,17 @@ class BaseHubConnection(object):
                     InvocationHandler(
                         message.invocation_id,
                         on_invocation))
-            
+
             self.transport.send(message)
             result.message = message
-        
+
         if type(arguments) is Subject:
             arguments.connection = self
             arguments.target = method
             arguments.start()
             result.invocation_id = arguments.invocation_id
             result.message = arguments
-        
+
 
         return result
 
@@ -174,7 +174,11 @@ class BaseHubConnection(object):
 
             if message.type == MessageType.close:
                 self.logger.info("Close message received from server")
-                self.stop()
+
+                if False:
+                    self.stop()
+                else:
+                    self.logger.info("Ignoring close message from server")
                 return
 
             if message.type == MessageType.completion:
@@ -258,4 +262,4 @@ class BaseHubConnection(object):
                 event_params,
                 headers=self.headers))
         return stream_obj
-    
+

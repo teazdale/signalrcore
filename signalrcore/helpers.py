@@ -6,14 +6,14 @@ class Helpers:
     @staticmethod
     def configure_logger(level=logging.INFO, handler=None):
         logger = Helpers.get_logger()
-        if handler is None:
-            handler = logging.StreamHandler()
-            handler.setFormatter(
-                logging.Formatter(
-                    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-            handler.setLevel(level)
-        logger.addHandler(handler)
-        logger.setLevel(level)
+        # if handler is None:
+        #     handler = logging.StreamHandler()
+        #     handler.setFormatter(
+        #         logging.Formatter(
+        #             '%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+        #     handler.setLevel(level)
+        # logger.addHandler(handler)
+        # logger.setLevel(level)
 
     @staticmethod
     def get_logger():

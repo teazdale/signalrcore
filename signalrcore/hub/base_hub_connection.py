@@ -1,10 +1,10 @@
-import uuid
+import os, uuid
 from typing import Callable
-from statshot_engine.signalrcore.signalrcore.messages.message_type import MessageType
-from statshot_engine.signalrcore.signalrcore.messages.stream_invocation_message\
+from ..messages.message_type import MessageType
+from ..messages.stream_invocation_message\
     import StreamInvocationMessage
 from .errors import HubConnectionError
-from statshot_engine.signalrcore.signalrcore.helpers import Helpers
+from ..helpers import Helpers
 from .handlers import StreamHandler, InvocationHandler
 from ..transport.websockets.websocket_transport import WebsocketTransport
 from ..helpers import Helpers
@@ -38,8 +38,6 @@ class BaseHubConnection(object):
             headers=self.headers,
             on_message=self.on_message,
             **kwargs)
-
-        self.ignore_server_close = kwargs["ignore_server_close"] or False
 
     def start(self):
         self.logger.debug("Connection started")
@@ -176,8 +174,9 @@ class BaseHubConnection(object):
 
             if message.type == MessageType.close:
                 self.logger.error("Close message received from server")
+                ignore_server_close = bool(os.environ.get("IGNORE_SERVER_CLOSE_MESSAGES", False))
 
-                if self.ignore_server_close is True:
+                if ignore_server_close is True:
                     self.logger.error("Ignoring close message from server")
                 else:
                     self.logger.error("Closing connection to server")

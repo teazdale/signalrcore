@@ -37,8 +37,6 @@ class HubConnectionBuilder(object):
         self.enable_trace = False  # socket trace
         self.skip_negotiation = False  # By default do not skip negotiation
         self.running = False
-        # Allow for server close messages to be ignored
-        self.ignore_server_close = False
 
     def with_url(
             self,
@@ -104,9 +102,6 @@ class HubConnectionBuilder(object):
 
             self.skip_negotiation = "skip_negotiation" in options.keys()\
                 and options["skip_negotiation"]
-
-        # Set ignore_server_close setting for HubConnections
-        self.ignore_server_close = options["ignore_server_close"] or False
 
         self.hub_url = hub_url
         self.hub = None
@@ -188,8 +183,7 @@ class HubConnectionBuilder(object):
                 reconnection_handler=self.reconnection_handler,
                 verify_ssl=self.verify_ssl,
                 skip_negotiation=self.skip_negotiation,
-                enable_trace=self.enable_trace,
-                ignore_server_close=self.ignore_server_close)\
+                enable_trace=self.enable_trace)\
             if self.has_auth_configured else\
             BaseHubConnection(
                 url=self.hub_url,
@@ -199,8 +193,7 @@ class HubConnectionBuilder(object):
                 headers=self.headers,
                 verify_ssl=self.verify_ssl,
                 skip_negotiation=self.skip_negotiation,
-                enable_trace=self.enable_trace,
-                ignore_server_close=self.ignore_server_close)
+                enable_trace=self.enable_trace)
 
     def with_automatic_reconnect(self, data: dict):
         """Configures automatic reconnection

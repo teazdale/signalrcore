@@ -39,6 +39,8 @@ class BaseHubConnection(object):
             on_message=self.on_message,
             **kwargs)
 
+        self.ignore_server_close = kwargs["ignore_server_close"] or False
+
     def start(self):
         self.logger.debug("Connection started")
         return self.transport.start()
@@ -173,12 +175,13 @@ class BaseHubConnection(object):
                     handler(message.arguments)
 
             if message.type == MessageType.close:
-                self.logger.info("Close message received from server")
+                self.logger.error("Close message received from server")
 
-                if False:
-                    self.stop()
+                if self.ignore_server_close is True:
+                    self.logger.error("Ignoring close message from server")
                 else:
-                    self.logger.info("Ignoring close message from server")
+                    self.logger.error("Closing connection to server")
+                    self.stop()
                 return
 
             if message.type == MessageType.completion:

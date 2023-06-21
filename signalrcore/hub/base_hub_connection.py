@@ -1,10 +1,10 @@
-import uuid
+import os, uuid
 from typing import Callable
-from signalrcore.messages.message_type import MessageType
-from signalrcore.messages.stream_invocation_message\
+from ..messages.message_type import MessageType
+from ..messages.stream_invocation_message\
     import StreamInvocationMessage
 from .errors import HubConnectionError
-from signalrcore.helpers import Helpers
+from ..helpers import Helpers
 from .handlers import StreamHandler, InvocationHandler
 from ..transport.websockets.websocket_transport import WebsocketTransport
 from ..helpers import Helpers
@@ -137,17 +137,17 @@ class BaseHubConnection(object):
                     InvocationHandler(
                         message.invocation_id,
                         on_invocation))
-            
+
             self.transport.send(message)
             result.message = message
-        
+
         if type(arguments) is Subject:
             arguments.connection = self
             arguments.target = method
             arguments.start()
             result.invocation_id = arguments.invocation_id
             result.message = arguments
-        
+
 
         return result
 
@@ -173,8 +173,14 @@ class BaseHubConnection(object):
                     handler(message.arguments)
 
             if message.type == MessageType.close:
-                self.logger.info("Close message received from server")
-                self.stop()
+                self.logger.error("Close message received from server")
+                ignore_server_close = bool(os.environ.get("IGNORE_SERVER_CLOSE_MESSAGES", False))
+
+                if ignore_server_close is True:
+                    self.logger.error("Ignoring close message from server")
+                else:
+                    self.logger.error("Closing connection to server")
+                    self.stop()
                 return
 
             if message.type == MessageType.completion:
@@ -258,4 +264,4 @@ class BaseHubConnection(object):
                 event_params,
                 headers=self.headers))
         return stream_obj
-    
+

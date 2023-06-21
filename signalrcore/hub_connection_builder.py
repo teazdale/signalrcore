@@ -194,7 +194,7 @@ class HubConnectionBuilder(object):
                 verify_ssl=self.verify_ssl,
                 skip_negotiation=self.skip_negotiation,
                 enable_trace=self.enable_trace)
-            
+
     def with_automatic_reconnect(self, data: dict):
         """Configures automatic reconnection
             https://devblogs.microsoft.com/aspnet/asp-net-core-updates-in-net-core-3-0-preview-4/
